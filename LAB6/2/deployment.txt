@@ -1,0 +1,25 @@
+AP count: 21
+AP1: floor=2 x=67.5 y=34.0 band=2.4GHz channel=1
+AP2: floor=2 x=22.5 y=34.0 band=2.4GHz channel=1
+AP3: floor=2 x=67.5 y=46.0 band=2.4GHz channel=6
+AP4: floor=2 x=22.5 y=46.0 band=2.4GHz channel=6
+AP5: floor=2 x=7.5 y=34.0 band=2.4GHz channel=11
+AP6: floor=2 x=7.5 y=46.0 band=2.4GHz channel=1
+AP7: floor=2 x=52.5 y=34.0 band=2.4GHz channel=11
+AP8: floor=2 x=82.5 y=46.0 band=2.4GHz channel=11
+AP9: floor=2 x=37.5 y=34.0 band=2.4GHz channel=1
+AP10: floor=2 x=37.5 y=46.0 band=2.4GHz channel=6
+AP11: floor=2 x=52.5 y=46.0 band=2.4GHz channel=11
+AP12: floor=2 x=82.5 y=34.0 band=2.4GHz channel=1
+AP13: floor=2 x=97.5 y=34.0 band=2.4GHz channel=6
+AP14: floor=2 x=97.5 y=46.0 band=2.4GHz channel=1
+AP15: floor=1 x=97.5 y=34.0 band=2.4GHz channel=1
+AP16: floor=1 x=7.5 y=34.0 band=2.4GHz channel=1
+AP17: floor=1 x=7.5 y=46.0 band=2.4GHz channel=6
+AP18: floor=1 x=97.5 y=46.0 band=2.4GHz channel=6
+AP19: floor=3 x=50.0 y=40.0 band=5GHz channel=36
+AP20: floor=2 x=50.0 y=40.0 band=5GHz channel=36
+AP21: floor=1 x=50.0 y=40.0 band=5GHz channel=36
+Coverage ratio: 0.8
+Strong coverage ratio: 0.2
+Overlap ratio: 0.4
