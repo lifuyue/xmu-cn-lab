@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "doc": {
+      "source": "openai/skills",
+      "sourceType": "github",
+      "computedHash": "7f8bfe9d1cbd6cb9a3617556387f2ac48911058a26d89345673c4565bb11717f"
+    }
+  }
+}
