@@ -1,0 +1,5 @@
+*.db
+*.docx
+tmp/
+license_server
+software_a
