@@ -1,0 +1,53 @@
+$ docker exec lab6-rip-r1 vtysh -c 'show ip rip' -c 'show ip route'
+Codes: R - RIP, C - connected, S - Static, O - OSPF, B - BGP
+Sub-codes:
+      (n) - normal, (s) - static, (d) - default, (r) - redistribute,
+      (i) - interface
+
+     Network            Next Hop         Metric From            Tag Time
+C(i) 10.1.12.0/24       0.0.0.0               1 self              0
+R(n) 10.1.23.0/24       10.1.12.3             2 10.1.12.3         0 02:56
+C(i) 192.168.110.0/24   0.0.0.0               1 self              0
+R(n) 192.168.130.0/24   10.1.12.3             3 10.1.12.3         0 02:56
+Codes: K - kernel route, C - connected, L - local, S - static,
+       R - RIP, O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,
+       f - OpenFabric, t - Table-Direct,
+       > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+       t - trapped, o - offload failure
+
+K>* 0.0.0.0/0 [0/0] via 192.168.110.1, eth0, 00:00:19
+C>* 10.1.12.0/24 is directly connected, eth1, 00:00:19
+L>* 10.1.12.2/32 is directly connected, eth1, 00:00:19
+R>* 10.1.23.0/24 [120/2] via 10.1.12.3, eth1, weight 1, 00:00:04
+C>* 192.168.110.0/24 is directly connected, eth0, 00:00:19
+L>* 192.168.110.254/32 is directly connected, eth0, 00:00:19
+R>* 192.168.130.0/24 [120/3] via 10.1.12.3, eth1, weight 1, 00:00:04
+
+$ docker exec lab6-rip-r3 vtysh -c 'show ip route'
+Codes: K - kernel route, C - connected, L - local, S - static,
+       R - RIP, O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,
+       f - OpenFabric, t - Table-Direct,
+       > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+       t - trapped, o - offload failure
+
+K>* 0.0.0.0/0 [0/0] via 192.168.130.1, eth1, 00:00:13
+R>* 10.1.12.0/24 [120/2] via 10.1.23.2, eth0, weight 1, 00:00:05
+C>* 10.1.23.0/24 is directly connected, eth0, 00:00:13
+L>* 10.1.23.3/32 is directly connected, eth0, 00:00:13
+R>* 192.168.110.0/24 [120/3] via 10.1.23.2, eth0, weight 1, 00:00:05
+C>* 192.168.130.0/24 is directly connected, eth1, 00:00:13
+L>* 192.168.130.254/32 is directly connected, eth1, 00:00:13
+
+$ docker exec lab6-rip-pc1 ping -c 4 -W 2 192.168.130.10
+PING 192.168.130.10 (192.168.130.10) 56(84) bytes of data.
+64 bytes from 192.168.130.10: icmp_seq=1 ttl=61 time=0.145 ms
+64 bytes from 192.168.130.10: icmp_seq=2 ttl=61 time=0.288 ms
+64 bytes from 192.168.130.10: icmp_seq=3 ttl=61 time=0.112 ms
+64 bytes from 192.168.130.10: icmp_seq=4 ttl=61 time=0.133 ms
+
+--- 192.168.130.10 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3082ms
+rtt min/avg/max/mdev = 0.112/0.169/0.288/0.069 ms
+

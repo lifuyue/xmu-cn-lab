@@ -1,0 +1,31 @@
+$ docker run -d --name lab6-vlan-lab --privileged lab6-frr-native:latest sleep infinity
+8bef2735bf2cddbc2d43a0c57c4c387901e1b9222afe0d7eea8021cb32d4301c
+
+$ docker exec lab6-vlan-lab bridge vlan show
+port              vlan-id  
+br0               1 PVID Egress Untagged
+swp1              10 PVID Egress Untagged
+swp2              20 PVID Egress Untagged
+swp3              10
+                  20
+
+$ docker exec lab6-vlan-lab ip netns exec router ip -d link show rtr-eth0.10
+11: rtr-eth0.10@rtr-eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether fe:20:ea:ba:85:cb brd ff:ff:ff:ff:ff:ff promiscuity 0 allmulti 0 minmtu 0 maxmtu 65535 
+    vlan protocol 802.1Q id 10 <REORDER_HDR> addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 65536 gso_max_segs 65535 tso_max_size 524280 tso_max_segs 65535 gro_max_size 65536 gso_ipv4_max_size 65536 gro_ipv4_max_size 65536 
+
+$ docker exec lab6-vlan-lab ip netns exec router ip route
+172.16.10.0/24 dev rtr-eth0.10 proto kernel scope link src 172.16.10.1 
+172.16.20.0/24 dev rtr-eth0.20 proto kernel scope link src 172.16.20.1 
+
+$ docker exec lab6-vlan-lab ip netns exec vlan10-host ping -c 4 -W 2 172.16.20.10
+PING 172.16.20.10 (172.16.20.10) 56(84) bytes of data.
+64 bytes from 172.16.20.10: icmp_seq=1 ttl=63 time=0.074 ms
+64 bytes from 172.16.20.10: icmp_seq=2 ttl=63 time=0.076 ms
+64 bytes from 172.16.20.10: icmp_seq=3 ttl=63 time=0.061 ms
+64 bytes from 172.16.20.10: icmp_seq=4 ttl=63 time=0.129 ms
+
+--- 172.16.20.10 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3056ms
+rtt min/avg/max/mdev = 0.061/0.085/0.129/0.026 ms
+

@@ -1,0 +1,101 @@
+$ docker network create --driver bridge --subnet 192.168.110.0/24 lab6_rip_lan10
+75ee0b717911c194c46d424fba5ce10fd73c82f29eb33dfc3ce4dd3f685d7d20
+
+$ docker network create --driver bridge --subnet 10.1.12.0/24 lab6_rip_link12
+9e3108264c58808af7c98467fcb67a08af1fbe2516aeb2b05619a4538b2dc466
+
+$ docker network create --driver bridge --subnet 10.1.23.0/24 lab6_rip_link23
+1e78fddc9427b51d7983852eaade5bff5d5f75b94c9f7d863abb0a129ddea8a6
+
+$ docker network create --driver bridge --subnet 192.168.130.0/24 lab6_rip_lan30
+a6bce32ec6b189370a58fae2b5582b05d812123f6f9c60f00a9acde8d50668f4
+
+$ docker exec lab6-rip-r1 vtysh -c 'show ip rip' -c 'show ip route'
+Codes: R - RIP, C - connected, S - Static, O - OSPF, B - BGP
+Sub-codes:
+      (n) - normal, (s) - static, (d) - default, (r) - redistribute,
+      (i) - interface
+
+     Network            Next Hop         Metric From            Tag Time
+C(i) 10.1.12.0/24       0.0.0.0               1 self              0
+R(n) 10.1.23.0/24       10.1.12.3             2 10.1.12.3         0 02:59
+C(i) 192.168.110.0/24   0.0.0.0               1 self              0
+R(n) 192.168.130.0/24   10.1.12.3             3 10.1.12.3         0 02:59
+Codes: K - kernel route, C - connected, L - local, S - static,
+       R - RIP, O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,
+       f - OpenFabric, t - Table-Direct,
+       > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+       t - trapped, o - offload failure
+
+K>* 0.0.0.0/0 [0/0] via 192.168.110.1, eth0, 00:00:15
+C>* 10.1.12.0/24 is directly connected, eth1, 00:00:15
+L>* 10.1.12.2/32 is directly connected, eth1, 00:00:15
+R>* 10.1.23.0/24 [120/2] via 10.1.12.3, eth1, weight 1, 00:00:00
+C>* 192.168.110.0/24 is directly connected, eth0, 00:00:15
+L>* 192.168.110.254/32 is directly connected, eth0, 00:00:15
+R>* 192.168.130.0/24 [120/3] via 10.1.12.3, eth1, weight 1, 00:00:00
+
+$ docker exec lab6-rip-r2 vtysh -c 'show ip rip' -c 'show ip route'
+Codes: R - RIP, C - connected, S - Static, O - OSPF, B - BGP
+Sub-codes:
+      (n) - normal, (s) - static, (d) - default, (r) - redistribute,
+      (i) - interface
+
+     Network            Next Hop         Metric From            Tag Time
+C(i) 10.1.12.0/24       0.0.0.0               1 self              0
+C(i) 10.1.23.0/24       0.0.0.0               1 self              0
+R(n) 192.168.110.0/24   10.1.12.2             2 10.1.12.2         0 02:59
+R(n) 192.168.130.0/24   10.1.23.3             2 10.1.23.3         0 02:59
+Codes: K - kernel route, C - connected, L - local, S - static,
+       R - RIP, O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,
+       f - OpenFabric, t - Table-Direct,
+       > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+       t - trapped, o - offload failure
+
+K>* 0.0.0.0/0 [0/0] via 10.1.12.1, eth0, 00:00:13
+C>* 10.1.12.0/24 is directly connected, eth0, 00:00:13
+L>* 10.1.12.3/32 is directly connected, eth0, 00:00:13
+C>* 10.1.23.0/24 is directly connected, eth1, 00:00:13
+L>* 10.1.23.2/32 is directly connected, eth1, 00:00:13
+R>* 192.168.110.0/24 [120/2] via 10.1.12.2, eth0, weight 1, 00:00:02
+R>* 192.168.130.0/24 [120/2] via 10.1.23.3, eth1, weight 1, 00:00:01
+
+$ docker exec lab6-rip-r3 vtysh -c 'show ip rip' -c 'show ip route'
+Codes: R - RIP, C - connected, S - Static, O - OSPF, B - BGP
+Sub-codes:
+      (n) - normal, (s) - static, (d) - default, (r) - redistribute,
+      (i) - interface
+
+     Network            Next Hop         Metric From            Tag Time
+R(n) 10.1.12.0/24       10.1.23.2             2 10.1.23.2         0 02:59
+C(i) 10.1.23.0/24       0.0.0.0               1 self              0
+R(n) 192.168.110.0/24   10.1.23.2             3 10.1.23.2         0 02:59
+C(i) 192.168.130.0/24   0.0.0.0               1 self              0
+Codes: K - kernel route, C - connected, L - local, S - static,
+       R - RIP, O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,
+       f - OpenFabric, t - Table-Direct,
+       > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+       t - trapped, o - offload failure
+
+K>* 0.0.0.0/0 [0/0] via 192.168.130.1, eth1, 00:00:10
+R>* 10.1.12.0/24 [120/2] via 10.1.23.2, eth0, weight 1, 00:00:02
+C>* 10.1.23.0/24 is directly connected, eth0, 00:00:10
+L>* 10.1.23.3/32 is directly connected, eth0, 00:00:10
+R>* 192.168.110.0/24 [120/3] via 10.1.23.2, eth0, weight 1, 00:00:02
+C>* 192.168.130.0/24 is directly connected, eth1, 00:00:10
+L>* 192.168.130.254/32 is directly connected, eth1, 00:00:10
+
+$ docker exec lab6-rip-pc1 ping -c 4 -W 2 192.168.130.10
+PING 192.168.130.10 (192.168.130.10) 56(84) bytes of data.
+64 bytes from 192.168.130.10: icmp_seq=1 ttl=61 time=0.197 ms
+64 bytes from 192.168.130.10: icmp_seq=2 ttl=61 time=0.291 ms
+64 bytes from 192.168.130.10: icmp_seq=3 ttl=61 time=0.100 ms
+64 bytes from 192.168.130.10: icmp_seq=4 ttl=61 time=0.181 ms
+
+--- 192.168.130.10 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3051ms
+rtt min/avg/max/mdev = 0.100/0.192/0.291/0.067 ms
+

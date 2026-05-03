@@ -1,0 +1,114 @@
+$ docker network create --driver bridge --subnet 192.168.10.0/24 lab6_static_lan10
+7c04c22a74783bffbac8dc24a827110706b858977eee58986e2ab0982327c3f5
+
+$ docker network create --driver bridge --subnet 10.0.12.0/24 lab6_static_link12
+cb18c6f5ab3f18d35ce067052433a0da7e22822a978242050d2b4afe48950fe3
+
+$ docker network create --driver bridge --subnet 10.0.23.0/24 lab6_static_link23
+8baf0671ffbcd8f549570b70f317a42310b36f2e598f27ebd7c24d71239a59dc
+
+$ docker network create --driver bridge --subnet 192.168.30.0/24 lab6_static_lan30
+a2a492abef3957314a700aa7c4a04d4613766d5af7c5da9ea00dcac8cc52d5f9
+
+$ docker exec lab6-static-r1 vtysh -c 'show interface brief' -c 'show ip route'
+Interface       Status  VRF             Addresses
+---------       ------  ---             ---------
+erspan0         down    default         
+eth0            up      default         192.168.10.254/24
+eth1            up      default         10.0.12.2/24
+gre0            down    default         
+gretap0         down    default         
+ip6_vti0        down    default         
+ip6gre0         down    default         
+ip6tnl0         down    default         
+ip_vti0         down    default         
+lo              up      default         
+sit0            down    default         
+tunl0           down    default         
+
+Codes: K - kernel route, C - connected, L - local, S - static,
+       R - RIP, O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,
+       f - OpenFabric, t - Table-Direct,
+       > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+       t - trapped, o - offload failure
+
+K>* 0.0.0.0/0 [0/0] via 192.168.10.1, eth0, 00:00:12
+C>* 10.0.12.0/24 is directly connected, eth1, 00:00:12
+L>* 10.0.12.2/32 is directly connected, eth1, 00:00:12
+C>* 192.168.10.0/24 is directly connected, eth0, 00:00:12
+L>* 192.168.10.254/32 is directly connected, eth0, 00:00:12
+S>* 192.168.30.0/24 [1/0] via 10.0.12.3, eth1, weight 1, 00:00:02
+
+$ docker exec lab6-static-r2 vtysh -c 'show interface brief' -c 'show ip route'
+Interface       Status  VRF             Addresses
+---------       ------  ---             ---------
+erspan0         down    default         
+eth0            up      default         10.0.12.3/24
+eth1            up      default         10.0.23.2/24
+gre0            down    default         
+gretap0         down    default         
+ip6_vti0        down    default         
+ip6gre0         down    default         
+ip6tnl0         down    default         
+ip_vti0         down    default         
+lo              up      default         
+sit0            down    default         
+tunl0           down    default         
+
+Codes: K - kernel route, C - connected, L - local, S - static,
+       R - RIP, O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,
+       f - OpenFabric, t - Table-Direct,
+       > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+       t - trapped, o - offload failure
+
+K>* 0.0.0.0/0 [0/0] via 10.0.12.1, eth0, 00:00:08
+C>* 10.0.12.0/24 is directly connected, eth0, 00:00:08
+L>* 10.0.12.3/32 is directly connected, eth0, 00:00:08
+C>* 10.0.23.0/24 is directly connected, eth1, 00:00:08
+L>* 10.0.23.2/32 is directly connected, eth1, 00:00:08
+S>* 192.168.10.0/24 [1/0] via 10.0.12.2, eth0, weight 1, 00:00:02
+S>* 192.168.30.0/24 [1/0] via 10.0.23.3, eth1, weight 1, 00:00:02
+
+$ docker exec lab6-static-r3 vtysh -c 'show interface brief' -c 'show ip route'
+Interface       Status  VRF             Addresses
+---------       ------  ---             ---------
+erspan0         down    default         
+eth0            up      default         10.0.23.3/24
+eth1            up      default         192.168.30.254/24
+gre0            down    default         
+gretap0         down    default         
+ip6_vti0        down    default         
+ip6gre0         down    default         
+ip6tnl0         down    default         
+ip_vti0         down    default         
+lo              up      default         
+sit0            down    default         
+tunl0           down    default         
+
+Codes: K - kernel route, C - connected, L - local, S - static,
+       R - RIP, O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,
+       f - OpenFabric, t - Table-Direct,
+       > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+       t - trapped, o - offload failure
+
+K>* 0.0.0.0/0 [0/0] via 192.168.30.1, eth1, 00:00:05
+C>* 10.0.23.0/24 is directly connected, eth0, 00:00:05
+L>* 10.0.23.3/32 is directly connected, eth0, 00:00:05
+S>* 192.168.10.0/24 [1/0] via 10.0.23.2, eth0, weight 1, 00:00:02
+C>* 192.168.30.0/24 is directly connected, eth1, 00:00:05
+L>* 192.168.30.254/32 is directly connected, eth1, 00:00:05
+
+$ docker exec lab6-static-pc1 ping -c 4 -W 2 192.168.30.10
+PING 192.168.30.10 (192.168.30.10) 56(84) bytes of data.
+64 bytes from 192.168.30.10: icmp_seq=1 ttl=61 time=0.268 ms
+64 bytes from 192.168.30.10: icmp_seq=2 ttl=61 time=0.198 ms
+64 bytes from 192.168.30.10: icmp_seq=3 ttl=61 time=0.108 ms
+64 bytes from 192.168.30.10: icmp_seq=4 ttl=61 time=0.156 ms
+
+--- 192.168.30.10 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3093ms
+rtt min/avg/max/mdev = 0.108/0.182/0.268/0.058 ms
+

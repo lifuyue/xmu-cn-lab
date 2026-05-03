@@ -1,0 +1,42 @@
+$ docker exec lab6-static-r1 vtysh -c 'show ip route'
+Codes: K - kernel route, C - connected, L - local, S - static,
+       R - RIP, O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,
+       f - OpenFabric, t - Table-Direct,
+       > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+       t - trapped, o - offload failure
+
+K>* 0.0.0.0/0 [0/0] via 192.168.10.1, eth0, 00:00:15
+C>* 10.0.12.0/24 is directly connected, eth1, 00:00:15
+L>* 10.0.12.2/32 is directly connected, eth1, 00:00:15
+C>* 192.168.10.0/24 is directly connected, eth0, 00:00:15
+L>* 192.168.10.254/32 is directly connected, eth0, 00:00:15
+S>* 192.168.30.0/24 [1/0] via 10.0.12.3, eth1, weight 1, 00:00:05
+
+$ docker exec lab6-static-r2 vtysh -c 'show ip route'
+Codes: K - kernel route, C - connected, L - local, S - static,
+       R - RIP, O - OSPF, I - IS-IS, B - BGP, E - EIGRP, N - NHRP,
+       T - Table, v - VNC, V - VNC-Direct, A - Babel, F - PBR,
+       f - OpenFabric, t - Table-Direct,
+       > - selected route, * - FIB route, q - queued, r - rejected, b - backup
+       t - trapped, o - offload failure
+
+K>* 0.0.0.0/0 [0/0] via 10.0.12.1, eth0, 00:00:12
+C>* 10.0.12.0/24 is directly connected, eth0, 00:00:12
+L>* 10.0.12.3/32 is directly connected, eth0, 00:00:12
+C>* 10.0.23.0/24 is directly connected, eth1, 00:00:12
+L>* 10.0.23.2/32 is directly connected, eth1, 00:00:12
+S>* 192.168.10.0/24 [1/0] via 10.0.12.2, eth0, weight 1, 00:00:06
+S>* 192.168.30.0/24 [1/0] via 10.0.23.3, eth1, weight 1, 00:00:06
+
+$ docker exec lab6-static-pc1 ping -c 4 -W 2 192.168.30.10
+PING 192.168.30.10 (192.168.30.10) 56(84) bytes of data.
+64 bytes from 192.168.30.10: icmp_seq=1 ttl=61 time=0.172 ms
+64 bytes from 192.168.30.10: icmp_seq=2 ttl=61 time=0.268 ms
+64 bytes from 192.168.30.10: icmp_seq=3 ttl=61 time=0.143 ms
+64 bytes from 192.168.30.10: icmp_seq=4 ttl=61 time=0.174 ms
+
+--- 192.168.30.10 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3080ms
+rtt min/avg/max/mdev = 0.143/0.189/0.268/0.047 ms
+

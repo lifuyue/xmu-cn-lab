@@ -1,0 +1,9 @@
+$ docker version --format 'Client={{.Client.Version}} Server={{.Server.Version}}'
+Client=29.2.1 Server=29.2.1
+
+$ docker image inspect lab6-frr-native:latest --format '{{.RepoDigests}}'
+[lab6-frr-native@sha256:d312ce18f05b30de646b0425b1408c0dee5660ba8c621d5163b1b4f125458e26]
+
+$ docker info --format 'OS={{.OperatingSystem}} Arch={{.Architecture}}'
+OS=Docker Desktop Arch=aarch64
+
